@@ -29,7 +29,7 @@ class GameMap(object):
         (0, -2, ),
         (0, -1, ),
         (-2, 0, ),
-		(-1, 0, ),
+	(-1, 0, ),
     )
 
     def __init__(self, rows, cols):
@@ -58,10 +58,10 @@ class GameMap(object):
         """
         for row in self.cells:
             for col_num in range(self.cols):
-				if random().random()<possibility_wall:
-					row[col_num] = -1
-				else:
-					row[col_num] = 1 if random.random() < possibility_live else 0
+		if random().random()<possibility_wall:
+			row[col_num] = -1
+		else:
+			row[col_num] = 1 if random.random() < possibility_live else 0
 
     def set(self, row, col, val):
         """Set specific cell in the map."""
@@ -79,6 +79,8 @@ class GameMap(object):
         Returns:
             Count of live neighbor cells
         """
+        if self.cells[col][row]==1:
+            return 2
         count = 0
         for d in self.DIRECTIONS:
             d_row = row + d[0]
@@ -88,7 +90,7 @@ class GameMap(object):
             if d_col >= self.cols or d_col<0:
                 continue
             if self.cells[d_col][d_row]==1:
-				count += 1
+		count += 1
         return count
 
     def get_neighbor_count_map(self):
@@ -116,4 +118,4 @@ class GameMap(object):
         assert isinstance(cell_maps, list) or isinstance(cell_maps, dict)
         assert isinstance(sep, str)
         for row in self.cells:
-            print(sep.join(map(lambda cell: cell_maps[cell], row)), file=fd)
+            print(sep.join(map(lambda cell: cell_maps[cell], row)))
