@@ -1,14 +1,36 @@
 # -*- coding: utf-8 -*-
 #
-# @author YourName
+# @author FireSword
 
 import random
 import sys
 
 
 class GameMap(object):
+    """
+    The game map, contains a lot of cells.
+
+    Each cell has a value, 0 means it is a dead/empty cell, 1 means it is a live cell,
+    and -1 means it is a wall cell.
+
+    Attributes:
+        size: a tuple shows the map's rows and columns
+        cells: a grid contains all the cells
+    """
     
     MAX_MAP_SIZE = 100
+    MAX_CELL_VALUE = 1
+    MIN_CELL_VALUE = -1
+    DIRECTIONS = (
+        (0, 2, ),
+        (0, 1, ),
+        (2, 0, ),
+        (1, 0, ),
+        (0, -2, ),
+        (0, -1, ),
+        (-2, 0, ),
+		(-1, 0, ),
+    )
 
     def __init__(self, rows, cols):
         """Inits GameMap with row and column count."""
@@ -21,23 +43,31 @@ class GameMap(object):
 
     @property
     def rows(self):
-        pass
+        return self.size[1]
 
     @property
     def cols(self):
-        pass
+        return self.size[0]
 
-    def reset(self, possibility=0.5):
+    def reset(self, possibility_live=0.5, possibility_wall=0.1):
         """Reset the map with random data.
 
         Args:
-            possibility: possibility of life cell
+            possibility_live: possibility of live cell
+            possibility_wall: to be added, means possibility of wall cell, represented with number -1
         """
-        pass
+        for row in self.cells:
+            for col_num in range(self.cols):
+				if random().random()<possibility_wall:
+					row[col_num] = -1
+				else:
+					row[col_num] = 1 if random.random() < possibility_live else 0
 
     def set(self, row, col, val):
         """Set specific cell in the map."""
-        pass
+        assert self.MIN_CELL_VALUE <= val <= self.MAX_CELL_VALUE
+        self.cells[col][row] = val
+        return self
 
     def get_neighbor_count(self, row, col):
         """Get count of neighbors in specific cell.
@@ -49,7 +79,17 @@ class GameMap(object):
         Returns:
             Count of live neighbor cells
         """
-        pass
+        count = 0
+        for d in self.DIRECTIONS:
+            d_row = row + d[0]
+            d_col = col + d[1]
+            if d_row >= self.rows or d_row<0:
+                continue
+            if d_col >= self.cols or d_col<0:
+                continue
+            if self.cells[d_col][d_row]==1:
+				count += 1
+        return count
 
     def get_neighbor_count_map(self):
         """Get count of neighbors of every cell in the map.
@@ -68,7 +108,11 @@ class GameMap(object):
             fd: file descriptor, default standard output
         """
         if not cell_maps:
-            cell_maps = ['0', '1']
+            cell_maps = {
+                -1: 'X',
+                0: '0',
+                1: '1',
+            }
         assert isinstance(cell_maps, list) or isinstance(cell_maps, dict)
         assert isinstance(sep, str)
         for row in self.cells:
