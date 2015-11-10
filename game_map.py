@@ -58,7 +58,7 @@ class GameMap(object):
         """
         for row in self.cells:
             for col_num in range(self.cols):
-				if random.random()<possibility_wall:
+				if random().random()<possibility_wall:
 					row[col_num] = -1
 				else:
 					row[col_num] = 1 if random.random() < possibility_live else 0
@@ -79,8 +79,6 @@ class GameMap(object):
         Returns:
             Count of live neighbor cells
         """
-        if self.cells[col][row]==-1:
-		    return 2
         count = 0
         for d in self.DIRECTIONS:
             d_row = row + d[0]
@@ -118,4 +116,4 @@ class GameMap(object):
         assert isinstance(cell_maps, list) or isinstance(cell_maps, dict)
         assert isinstance(sep, str)
         for row in self.cells:
-            print(sep.join(map(lambda cell: cell_maps[cell], row)))
+            print(sep.join(map(lambda cell: cell_maps[cell], row)), file=fd)
